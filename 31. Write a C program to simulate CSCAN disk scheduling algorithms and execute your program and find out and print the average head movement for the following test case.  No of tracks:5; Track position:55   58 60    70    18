@@ -1,0 +1,77 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+#define MAX 100
+
+void cscan(int tracks[], int n, int start)
+{
+    int i, j, head, movement = 0;
+    int visited[MAX];
+
+    // Initialize visited array
+    for (i = 0; i < n; i++)
+        visited[i] = 0;
+
+    // Sort the tracks in ascending order
+    for (i = 0; i < n - 1; i++)
+    {
+        for (j = 0; j < n - i - 1; j++)
+        {
+            if (tracks[j] > tracks[j + 1])
+            {
+                int temp = tracks[j];
+                tracks[j] = tracks[j + 1];
+                tracks[j + 1] = temp;
+            }
+        }
+    }
+
+    // Find the index of the starting track
+    for (i = 0; i < n; i++)
+    {
+        if (tracks[i] >= start)
+            break;
+    }
+
+    // Calculate head movement towards higher tracks
+    printf("Head Movement (Higher Tracks):\n");
+    head = start;
+    for (j = i; j < n; j++)
+    {
+        printf("%d -> %d\n", head, tracks[j]);
+        movement += abs(head - tracks[j]);
+        head = tracks[j];
+        visited[j] = 1;
+    }
+
+    // Move head to the highest track
+    printf("%d -> %d\n", head, tracks[n - 1]);
+    movement += abs(head - tracks[n - 1]);
+    head = tracks[n - 1];
+
+    // Calculate head movement towards lower tracks
+    printf("Head Movement (Lower Tracks):\n");
+    for (j = 0; j < i; j++)
+    {
+        if (visited[j] != 1)
+        {
+            printf("%d -> %d\n", head, tracks[j]);
+            movement += abs(head - tracks[j]);
+            head = tracks[j];
+        }
+    }
+
+    printf("Total Head Movement: %d\n", movement);
+    printf("Average Head Movement: %.2f\n", (float)movement / n);
+}
+
+int main()
+{
+    int tracks[] = {55, 58, 60, 70, 18};
+    int n = sizeof(tracks) / sizeof(tracks[0]);
+    int start = 50;
+
+    cscan(tracks, n, start);
+
+    return 0;
+}
