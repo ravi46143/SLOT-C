@@ -1,0 +1,45 @@
+#include <stdio.h>
+
+#define MAX_PARTITIONS 5
+
+// Structure to represent memory partitions
+struct Partition {
+    int size;
+    int allocated;
+};
+
+// Function to allocate memory using first-fit algorithm
+void firstFit(int processSize, struct Partition partitions[], int numPartitions) {
+    int i, j;
+    for (i = 0; i < numPartitions; i++) {
+        if (partitions[i].allocated == 0 && partitions[i].size >= processSize) {
+            partitions[i].allocated = 1;
+            printf("Process of size %d KB allocated to partition %d.\n", processSize, i+1);
+            return;
+        }
+    }
+    printf("No suitable partition found for process of size %d KB.\n", processSize);
+}
+
+int main() {
+    struct Partition partitions[MAX_PARTITIONS] = {
+        {40, 0}, {10, 0}, {30, 0}, {60, 0}
+    };
+
+    int processSizes[] = {100, 50, 30, 120, 35};
+    int numProcesses = sizeof(processSizes) / sizeof(processSizes[0]);
+
+    int i;
+    for (i = 0; i < numProcesses; i++) {
+        printf("Allocating process of size %d KB...\n", processSizes[i]);
+        firstFit(processSizes[i], partitions, MAX_PARTITIONS);
+        printf("Current memory status:\n");
+        for (int j = 0; j < MAX_PARTITIONS; j++) {
+            printf("Partition %d: Size=%d KB, Allocated=%s\n", j+1, partitions[j].size,
+                   partitions[j].allocated ? "Yes" : "No");
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
